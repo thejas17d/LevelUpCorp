@@ -75,6 +75,7 @@ def apply_queue(cfg: Config, profile: dict, llm: LLM, db: DB) -> dict:
     browser = None
     done = 0
     companies_today: set[str] = set()
+    new_assisted: list = []
     try:
         for job in queue:
             if done >= remaining:
@@ -87,6 +88,7 @@ def apply_queue(cfg: Config, profile: dict, llm: LLM, db: DB) -> dict:
             if method == "assisted":
                 db.set_status(job["key"], "assisted", url)
                 stats["assisted"] += 1
+                new_assisted.append((job, url))
                 continue
             try:
                 if method == "recruitee_api":
@@ -121,6 +123,10 @@ def apply_queue(cfg: Config, profile: dict, llm: LLM, db: DB) -> dict:
             from levelup.notify import telegram
             telegram("LevelUp run done - " + ", ".join(f"{k}: {v}" for k, v in stats.items() if v)
                      + (" (DRY RUN, nothing submitted)" if cfg.dry_run else ""))
+            if new_assisted and not cfg.dry_run:
+                top = sorted(new_assisted, key=lambda x: -(x[0].get("score") or 0))[:20]
+                telegram(f"New apply-yourself jobs ({len(new_assisted)}):\n\n" + "\n\n".join(
+                    f"{j['company']} - {j['title']} ({(j['location'] or '')[:25]}) · fit {j.get('score')}\n{u}" for j, u in top))
     return stats
 
 

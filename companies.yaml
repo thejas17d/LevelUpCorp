@@ -98,3 +98,40 @@ companies:
   - {name: UiPath, ats: ashby, token: uipath}
   - {name: Thoughtworks, ats: ashby, token: thoughtworks}
   - {name: Nium, ats: lever, token: nium}
+
+  # --- International companies with India offices, added 26 Nov 2026 (feeds verified live with India roles) ---
+  # Auto-apply supported (Greenhouse / Lever / Ashby):
+  - {name: Anaplan, ats: greenhouse, token: anaplan}
+  - {name: Commvault, ats: greenhouse, token: commvault}
+  - {name: Wiz, ats: greenhouse, token: wizinc}
+  - {name: JFrog, ats: greenhouse, token: jfrog}
+  - {name: Mixpanel, ats: greenhouse, token: mixpanel}
+  - {name: Figma, ats: greenhouse, token: figma}
+  - {name: Roblox, ats: greenhouse, token: roblox}
+  - {name: DoorDash, ats: greenhouse, token: doordashusa}
+  - {name: Salesloft, ats: greenhouse, token: salesloft}
+  - {name: WorldQuant, ats: greenhouse, token: worldquant}
+  - {name: Coupa, ats: lever, token: coupa}
+  - {name: Kong, ats: ashby, token: kong}
+  # SmartRecruiters (discovered + pre-filled; you finish the form):
+  - {name: Grab, ats: smartrecruiters, token: grab}
+  - {name: Wise, ats: smartrecruiters, token: wise}
+
+  # --- Workday career sites (discovery only: Workday needs an account per company -> apply-yourself list) ---
+  - {name: Salesforce, ats: workday, token: salesforce.wd12/External_Career_Site}
+  - {name: Adobe, ats: workday, token: adobe.wd5/external_experienced}
+  - {name: Cisco, ats: workday, token: cisco.wd5/Cisco_Careers}
+  - {name: Intel, ats: workday, token: intel.wd1/External}
+  - {name: PayPal, ats: workday, token: paypal.wd1/jobs}
+  - {name: Mastercard, ats: workday, token: mastercard.wd1/CorporateCareers}
+  - {name: CrowdStrike, ats: workday, token: crowdstrike.wd5/crowdstrikecareers}
+  - {name: Morgan Stanley, ats: workday, token: ms.wd5/External}
+  - {name: Wells Fargo, ats: workday, token: wf.wd1/WellsFargoJobs}
+  - {name: Motorola Solutions, ats: workday, token: motorolasolutions.wd5/Careers}
+  - {name: Micron, ats: workday, token: micron.wd1/External}
+  - {name: GE HealthCare, ats: workday, token: gehc.wd5/GEHC_ExternalSite}
+  - {name: Equinix, ats: workday, token: equinix.wd1/External}
+  - {name: KLA, ats: workday, token: kla.wd1/Search}
+  - {name: Broadcom, ats: workday, token: broadcom.wd1/External_Career}
+  # Not readable by the tool (custom careers sites) - check by hand: Atlassian, Google, Microsoft, Amazon,
+  # Uber, Flipkart, PhonePe, Swiggy (own portal), Zomato, Infosys, TCS. Their roles still appear via LinkedIn/Naukri discovery.

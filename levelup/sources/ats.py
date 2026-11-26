@@ -119,8 +119,10 @@ def workday(name: str, token: str, cfg: Config) -> list[Job]:
     tenant = host.split(".")[0]
     base = f"https://{host}.myworkdayjobs.com"
     out = []
-    for offset in (0, 20, 40, 60):
-        r = post(f"{base}/wday/cxs/{tenant}/{site}/jobs", json={"limit": 20, "offset": offset, "searchText": ""})
+    # Big global employers list thousands of jobs; search for India so the first pages are the relevant ones.
+    search = cfg.get("sources.workday_search_text", "India")
+    for offset in (0, 20, 40, 60, 80):
+        r = post(f"{base}/wday/cxs/{tenant}/{site}/jobs", json={"limit": 20, "offset": offset, "searchText": search})
         if r.status_code != 200:
             break
         postings = r.json().get("jobPostings", [])

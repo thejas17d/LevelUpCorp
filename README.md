@@ -4,15 +4,30 @@
 
 You give LevelUpCorp your resume once. After that it keeps doing the job hunt for you:
 
-1. **Finds jobs.** It checks 55+ tech companies' career pages and several job boards, plus LinkedIn, Indeed, Naukri and Glassdoor if you turn that on.
+1. **Finds jobs.** It checks **100+ companies' official career pages** (Indian startups plus international companies with India offices: Stripe, Okta, Databricks, GitLab, Celonis, Salesforce, Adobe, Cisco, Intel...) and several job boards, plus LinkedIn, Indeed, Naukri and Glassdoor if you turn that on.
 2. **Keeps only the ones that fit.** Roles must match your resume, sit in your pay range (default **8 LPA and up**) and be in India or open to remote from India.
 3. **Applies.** It opens each application form in a real browser, fills every field from *your* profile, attaches your resume, writes the "why this company?" answers and submits.
 4. **Watches your inbox.** When a company replies with an interview, assessment, offer or recruiter message, it **emails you an alert** with what to do next.
 5. **Repeats** every few hours, within a daily cap you set.
 
-It is built in Python and uses Claude (the Anthropic API) for reading your resume, scoring jobs, answering form questions and sorting recruiter emails.
+It is built in Python. An LLM reads your resume, scores jobs, answers form questions and sorts recruiter emails: **Groq (free tier)** or Claude (the Anthropic API).
 
 > **Setting it up for the first time?** Follow [HANDOFF.md](HANDOFF.md). It's a click-by-click guide that takes about 30–45 minutes.
+
+## What's new in v0.2 (26 Nov 2026)
+
+| Change | Why |
+|---|---|
+| **Free LLM: Groq.** `llm.provider: groq` with a chain of models (`openai/gpt-oss-120b` → `qwen/qwen3.8-27b` → `openai/gpt-oss-20b`). When one hits its per-minute limit, the next takes over. | No paid API key needed. Free tier = 8,000 tokens/min per model, so prompts are kept small (see `llm.*` settings). |
+| **Fixed answers for standard questions** (work authorisation, visa sponsorship, non-compete, previously worked here, consent and privacy boxes, marketing opt-outs, school/degree/employer from your profile). | Open models sometimes get these wrong (one said "Yes" to needing visa sponsorship). These now never depend on the model. |
+| **Smarter dropdowns:** "Bachelor of Engineering" → "Bachelor's Degree", a school not in the list → "Other", "Prefer not to say" → "Decline to self-identify". | Forms were stalling on near-miss options. |
+| **Hard filters:** skips postings that ask for more years than `search.max_required_years` (default 3), and "Remote - US" / "Chicago, US-Remote" style roles. | The LLM sometimes scored 5+ year roles as a fit. |
+| **Telegram alerts** for CAPTCHAs, forms that need you, new apply-yourself jobs, run summaries and interview replies. | So you can react from your phone. |
+| **Emailed security codes** (Greenhouse) are read from your inbox and entered automatically. | Otherwise those applications got stuck. |
+| **Greenhouse embed forms** (Coinbase, Stripe...) open directly. | Some company sites hide the form in an iframe. |
+| **100+ company boards** in `companies.yaml`, including 30 international companies with India offices (Workday ones are discovery-only). | Wider net, all official careers pages. |
+| **Continuous mode:** `scripts\run_loop.ps1` runs a cycle every 15 minutes until you close the window. | "Keep applying until I say stop." |
+| **Daily log:** `scripts\daily_summary.py` writes `applications on <date>.html`; `run_once.ps1` can push it to a git repo (`RESUME_REPO` in `.env`). | One shareable page per day. |
 
 ---
 
@@ -83,7 +98,8 @@ git clone https://github.com/thejas17d/LevelUpCorp.git
 cd LevelUpCorp
 powershell -ExecutionPolicy Bypass -File scripts\setup.ps1     # venv + packages + browser + config files
 
-# 1. put your keys in .env (ANTHROPIC_API_KEY, EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
+# 1. put your keys in .env (GROQ_API_KEY *or* ANTHROPIC_API_KEY, EMAIL_ADDRESS, EMAIL_APP_PASSWORD,
+#    optional TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID)
 # 2. edit config.yaml (expected CTC, notice period, cities...)
 
 .\.venv\Scripts\python -m levelup setup --resume "C:\path\to\resume.pdf"
@@ -93,8 +109,11 @@ powershell -ExecutionPolicy Bypass -File scripts\setup.ps1     # venv + packages
 ```
 
 When the dry-run screenshots in `data/screenshots/` look right, set `apply.dry_run: false` in `config.yaml`. Then either:
-- leave `python -m levelup run` running, or
-- schedule it with `scripts\schedule_task.ps1`.
+- **run continuously:** `powershell -ExecutionPolicy Bypass -File scripts\run_loop.ps1 -Minutes 15` (one cycle, 15-minute pause, repeat; close the window to stop), or
+- leave `python -m levelup run` running (one cycle every `schedule.every_hours`), or
+- schedule it with `scripts\schedule_task.ps1 -Hours 3` (remove with `-Remove`).
+
+The laptop must stay awake: set Windows sleep to "Never" while plugged in.
 
 macOS / Linux: the same commands work with `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/python -m playwright install chromium`.
 
@@ -124,8 +143,10 @@ Two files, both **git-ignored** so your personal data never reaches GitHub.
 
 | Key | Needed for |
 |---|---|
-| `ANTHROPIC_API_KEY` | Everything (resume, scoring, answers, email sorting) |
-| `EMAIL_ADDRESS`, `EMAIL_APP_PASSWORD` | Reading replies and sending you alerts (Gmail App Password, not your normal password) |
+| `GROQ_API_KEY` **or** `ANTHROPIC_API_KEY` | Everything (resume, scoring, answers, email sorting). Groq is free: console.groq.com → API Keys. |
+| `EMAIL_ADDRESS`, `EMAIL_APP_PASSWORD` | Reading replies, emailed security codes, and sending you alerts (Gmail App Password, not your normal password; needs 2-Step Verification on) |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Optional phone alerts. Create a bot with @BotFather, message it once, then run `doctor`. |
+| `RESUME_REPO` | Optional: local git repo where `run_once.ps1` writes and pushes `Applications/applications on <date>.html` |
 | `ADZUNA_APP_ID`, `ADZUNA_APP_KEY` | Optional: Adzuna India jobs (free key) |
 | `JOOBLE_API_KEY`, `JOOBLE_HOST` | Optional: Jooble (free key; the key must come from the India site, `in.jooble.org`) |
 
@@ -139,6 +160,10 @@ Two files, both **git-ignored** so your personal data never reaches GitHub.
 | `search.keywords` | `[]` | Search terms. Empty means use the job titles Claude inferred from your resume. |
 | `search.title_must_include` / `title_exclude` | tech titles / managers, sales... | Cheap whole-word title filter |
 | `search.senior_titles_from_years` | `4` | Skip Senior/Lead/Staff titles below this much experience |
+| `search.max_required_years` | `3` | Skip postings whose description asks for this many years or more |
+| `llm.provider` / `llm.chain` | `auto` | `groq`, `anthropic`, `openrouter` or `nvidia`; `chain` = models tried in order |
+| `llm.score_batch_size`, `llm.*_description_chars`, `llm.*_max_tokens` | 8 / 2500 / 16000 | Keep these small on Groq's free tier (2 / 1200-1500 / 1500-3000) |
+| `sources.workday_search_text` | `India` | Search text sent to Workday career sites so India roles come first |
 | `match.min_score` | `70` | Claude fit score needed to apply (0–100) |
 | `apply.dry_run` | **`true`** | **Fills forms but never submits.** Turn off when you're happy. |
 | `apply.max_applications_per_day` | `20` | Daily cap |
@@ -155,7 +180,7 @@ Two files, both **git-ignored** so your personal data never reaches GitHub.
 
 | Source | Type | Notes |
 |---|---|---|
-| **55+ company career pages** (`companies.yaml`): Razorpay, Groww, CRED, Meesho, Paytm, Swiggy, Freshworks, Sarvam AI, Databricks, Stripe, MongoDB, Atlassian-style global companies with India offices... | Public ATS JSON feeds (Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Recruitee, Workday) | Best quality; also the forms the tool can fill. Feeds verified 24 Nov 2026. |
+| **100+ official company career pages** (`companies.yaml`). Indian startups and unicorns: Razorpay, Groww, CRED, Meesho, Paytm, Swiggy, Freshworks, Sarvam AI, HighRadius, Sigmoid... International companies with India (mostly Bengaluru) offices: Stripe, Okta, Zscaler, Databricks, MongoDB, Rubrik, GitLab, Celonis, Datadog, Netskope, UiPath, Figma, Wiz, JFrog, Kong, Coupa, Grab, Wise; plus Workday sites for Salesforce, Adobe, Cisco, Intel, PayPal, Mastercard, CrowdStrike, Morgan Stanley, Wells Fargo, Micron, Equinix, KLA and more | Public ATS JSON feeds (Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Recruitee, Workday) | Best quality; Greenhouse/Lever/Ashby forms are auto-filled, SmartRecruiters goes to review, Workday to the apply-yourself list. Feeds verified 24 and 26 Nov 2026. **Not readable** (custom portals; check by hand or via LinkedIn/Naukri discovery): Atlassian, Google, Microsoft, Amazon, Uber, Flipkart, PhonePe, Zomato, Infosys, TCS. |
 | **Himalayas** | Search API filtered to India | Remote roles open to India, with salary when listed |
 | **RemoteOK**, **Jobicy** (APAC + Anywhere), **Remotive** | Public APIs | Remote roles. Remotive allows at most 4 calls a day, so the tool calls it every 6 hours at most. |
 | **Hacker News "Who is hiring"** | Algolia API | Monthly thread; keeps posts mentioning India or worldwide remote |

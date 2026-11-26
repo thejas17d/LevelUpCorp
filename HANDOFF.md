@@ -2,7 +2,7 @@
 
 Read this first, whether you're setting the tool up or picking up the code. Part A is a click-by-click setup. Part B is for whoever maintains the code next.
 
-**Status on 24 Nov 2026: v0.1 is built and tested end to end in dry-run mode, but not yet run with a real resume and API key.**
+**Status on 26 Nov 2026: v0.2 is LIVE.** First real day: 11,788 jobs found, 3 applications auto-submitted (GitLab, HighRadius, Celonis; all confirmed by "thanks for applying" emails), 74 apply-yourself links sent to Telegram. It now runs on the free Groq tier, sends Telegram alerts, and runs continuously via `scripts\run_loop.ps1`. See "What was tested (26 Nov 2026)" and "Lessons from the first live day" in Part B.
 
 ---
 
@@ -12,7 +12,8 @@ Read this first, whether you're setting the tool up or picking up the code. Part
 - A Windows PC with **Python 3.10 or newer**. Check by opening PowerShell and typing `python --version`.
 - Your resume as a **PDF** (or DOCX).
 - A **Gmail** account, the same one you put on applications.
-- About **$10 of Claude API credit** to start (see Costs in README.md).
+- An LLM key: a **free Groq key** (recommended, Step 2) or about **$10 of Claude API credit** (see Costs in README.md).
+- Optional: **Telegram** on your phone, for alerts (Step 4b).
 
 ### Step 1: Get the code and install (5–10 minutes)
 1. Open **PowerShell**.
@@ -29,7 +30,12 @@ Read this first, whether you're setting the tool up or picking up the code. Part
    ```
    It creates a private Python environment (`.venv`), installs the packages and the browser, and creates `.env` and `config.yaml` from the templates. It's safe to run again.
 
-### Step 2: Claude API key (5 minutes)
+### Step 2: LLM key (5 minutes)
+**Free option (recommended): Groq.**
+1. Go to https://console.groq.com/, sign in, open **API Keys → Create API Key**, copy it (starts with `gsk_`).
+2. In `.env` add `GROQ_API_KEY=` followed by the key. In `config.yaml` keep `llm.provider: groq` and the small `llm.*` sizes from `config.example.yaml` comments (free tier = 8,000 tokens per minute per model).
+
+**Paid option: Claude.**
 1. Go to https://console.anthropic.com/ and sign in.
 2. Open **Plans & Billing** and add credit. Setting a monthly spend limit is a good idea.
 3. Open **API Keys → Create Key**, name it `LevelUpCorp`, and copy it. It starts with `sk-ant-`.
@@ -54,6 +60,14 @@ Read this first, whether you're setting the tool up or picking up the code. Part
 
 Is this safe? The app password lets LevelUpCorp **read** your inbox (read-only) and **send** alert emails to you. You can revoke it at any time from the same Google page.
 
+"App passwords not available for your account"? 2-Step Verification is off, or it uses only passkeys/security keys. Turn it on with a phone number or authenticator app, then retry.
+
+### Step 4b: Telegram alerts (optional, 2 minutes)
+1. In Telegram open **@BotFather**, send `/newbot`, pick a name. Copy the **token** it gives you.
+2. Open your new bot and send it any message ("hi") so it can reply to you.
+3. In `.env` set `TELEGRAM_BOT_TOKEN=` (the token). For `TELEGRAM_CHAT_ID`, open `https://api.telegram.org/bot<TOKEN>/getUpdates` in a browser and copy `"chat":{"id": ...}`.
+4. You'll get pings for: CAPTCHAs waiting (solve in the laptop browser, or via Chrome Remote Desktop), forms that need you, new apply-yourself jobs, run summaries and interview/test replies.
+
 ### Step 5: Read your resume (2 minutes)
 ```powershell
 .\.venv\Scripts\python -m levelup setup --resume "C:\Users\<you>\Documents\Resume.pdf"
@@ -76,12 +90,13 @@ A browser window opens and fills a few application forms **without submitting**.
 
 ### Step 8: Go live
 1. In `config.yaml`, set `apply.dry_run: false`.
-2. Start the loop:
+2. **Continuous (recommended):**
    ```powershell
-   .\.venv\Scripts\python -m levelup run
+   powershell -ExecutionPolicy Bypass -File scripts\run_loop.ps1 -Minutes 15
    ```
-   It runs a cycle every 4 hours. Leave the window open; Ctrl+C stops it.
-3. **Or** schedule it so you don't need a window open:
+   One full cycle, a 15-minute pause, repeat, until you close that window (its PID is in `data\loop.pid`). Keep the laptop awake (Settings → System → Power → sleep: Never when plugged in).
+3. **Or** a slower loop in this window: `.\.venv\Scripts\python -m levelup run` (every `schedule.every_hours`); Ctrl+C stops it.
+4. **Or** schedule it so you don't need a window open:
    ```powershell
    powershell -ExecutionPolicy Bypass -File scripts\schedule_task.ps1          # every 4 hours
    powershell -ExecutionPolicy Bypass -File scripts\schedule_task.ps1 -Remove  # to undo
@@ -158,15 +173,30 @@ A browser window opens and fills a few application forms **without submitting**.
 
   Do these during Step 7 (dry run) before going live.
 
+### What was tested (26 Nov 2026, first live day)
+- Groq provider end to end: resume parsing, scoring 300+ jobs with model failover on 429s, form answers.
+- Live submissions on Greenhouse (GitLab, HighRadius, Celonis) with confirmation emails received within a minute.
+- Telegram alerts, Gmail IMAP (read-only), automatic push of the daily log, the continuous loop.
+- Not yet seen live: a CAPTCHA wait, an emailed Greenhouse security code (code path written, untested), Lever and Ashby submits.
+
+### Lessons from the first live day
+- **Always dry-run a new form type and read the answers before going live.** Groq invented "Yes" to visa sponsorship and blanked consent boxes; `_apply_fixed_rules()` in `browser.py` now overrides those questions. Add a rule there whenever a model gets a standard question wrong.
+- **LLM fit scores miss experience requirements.** `matcher.required_years()` now filters "N+ years" postings before scoring.
+- **"Remote - US" was read as worldwide remote.** `REMOTE_TIED` in `matcher.py` fixes it.
+- **Volume:** for a <1 year profile, genuine auto-submittable matches are a handful per day; most fresher roles live on LinkedIn/Naukri (apply-yourself list). Don't loosen filters to chase a number.
+- **SmartRecruiters** "I'm interested" flow is not supported (Bosch, ServiceNow, Grab, Wise land in review).
+- **Greenhouse education fields** with long school lists may lack "Other" (Celonis); those go to review.
+
 ### Known gaps and next steps
-1. **Run the first real dry run** with a real resume and API key. Check the answer quality in the screenshots and tune the prompts in `browser.py: ANSWER_SYSTEM` and `matcher.py: _system`.
-2. **Greenhouse company-site embeds:** some return "could not find an application form" (Samsara during the test). Possible fix: when `gh_jid` is present, open `https://job-boards.greenhouse.io/embed/job_app?for=<token>&token=<id>` directly.
-3. **Greenhouse questions API:** `sources/ats.py: greenhouse_questions()` already fetches exact field names and options. Wire it into `browser.py` to give the combobox options to Claude (today comboboxes are answered free-text, then the closest option is matched).
-4. **Ashby duplicate check:** Ashby merges candidates by email. The per-company 30-day limit covers most cases.
-5. **Workday:** add a proper fetcher with descriptions and backoff, or leave it as is.
-6. **Job-alert emails as a source:** parse Naukri and LinkedIn alert emails already arriving in the inbox. That's allowed by their terms and is a good extra source.
-7. **Cloud deployment** so it runs while the PC is off: a small VM plus Xvfb for the headed browser. CAPTCHAs would then need a notification asking you to finish in `review`.
-8. **Answer memory UI:** today it's `data/answer_memory.json`; a small editor page would help.
+1. ~~First real dry run~~ done 26 Nov 2026. Keep tuning `ANSWER_SYSTEM` and the fixed rules from real forms.
+2. ~~Greenhouse company-site embeds~~ fixed 26 Nov: `router.to_form_url()` opens `job-boards.greenhouse.io/embed/job_app?for=<token>&token=<id>`.
+3. **SmartRecruiters apply flow:** support the oneclick-ui form, or keep routing to review.
+4. **Greenhouse questions API:** `sources/ats.py: greenhouse_questions()` already fetches exact field names and options. Wire it into `browser.py` to give the combobox options to Claude (today comboboxes are answered free-text, then the closest option is matched).
+5. **Ashby duplicate check:** Ashby merges candidates by email. The per-company 30-day limit covers most cases.
+6. **Workday:** add a proper fetcher with descriptions and backoff, or leave it as is.
+7. **Job-alert emails as a source:** parse Naukri and LinkedIn alert emails already arriving in the inbox. That's allowed by their terms and is a good extra source.
+8. **Cloud deployment** so it runs while the PC is off: a small VM plus Xvfb for the headed browser. CAPTCHAs would then need a notification asking you to finish in `review`.
+9. **Answer memory UI:** today it's `data/answer_memory.json`; a small editor page would help.
 
 ### Files that must never be committed
 `.env`, `config.yaml`, `data/` (profile, database, screenshots, cover letters, browser profile), and any resume file. All of these are in `.gitignore`. **The GitHub repo is public.**
