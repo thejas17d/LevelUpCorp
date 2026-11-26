@@ -1,0 +1,100 @@
+# Company career pages LevelUpCorp watches (read through each ATS's public JSON feed).
+# Verified live on 24 Nov 2026. Add your own dream companies - see HANDOFF.md "Adding companies".
+#
+# ats: greenhouse | lever | ashby | workable | smartrecruiters | recruitee | workday
+# token: the company's board id, i.e. the part of the URL after the ATS domain:
+#   job-boards.greenhouse.io/<token>   jobs.lever.co/<token>   jobs.ashbyhq.com/<token>
+#   apply.workable.com/<token>         jobs.smartrecruiters.com/<token>   <token>.recruitee.com
+#   workday: "<tenant>.<wdN>/<site>"  from  https://<tenant>.<wdN>.myworkdayjobs.com/<site>
+
+companies:
+  # --- Greenhouse (auto-fill supported) ---
+  - {name: Razorpay, ats: greenhouse, token: razorpaysoftwareprivatelimited}
+  - {name: Groww, ats: greenhouse, token: groww}
+  - {name: InMobi, ats: greenhouse, token: inmobi}
+  - {name: Truecaller, ats: greenhouse, token: truecaller}
+  - {name: HighRadius, ats: greenhouse, token: highradius}
+  - {name: Druva, ats: greenhouse, token: druva}
+  - {name: Observe.AI, ats: greenhouse, token: observeai}
+  - {name: Turing, ats: greenhouse, token: turing}
+  - {name: Stripe, ats: greenhouse, token: stripe}
+  - {name: Databricks, ats: greenhouse, token: databricks}
+  - {name: Rubrik, ats: greenhouse, token: rubrik}
+  - {name: MongoDB, ats: greenhouse, token: mongodb}
+  - {name: Okta, ats: greenhouse, token: okta}
+  - {name: Zscaler, ats: greenhouse, token: zscaler}
+  - {name: Pure Storage, ats: greenhouse, token: purestorage}
+  - {name: GitLab, ats: greenhouse, token: gitlab}
+  - {name: Fivetran, ats: greenhouse, token: fivetran}
+  - {name: Glean, ats: greenhouse, token: gleanwork}
+  - {name: Twilio, ats: greenhouse, token: twilio}
+  - {name: Harness, ats: greenhouse, token: harnessinc}
+  - {name: Elastic, ats: greenhouse, token: elastic}
+  - {name: Sumo Logic, ats: greenhouse, token: sumologic}
+  - {name: Agoda, ats: greenhouse, token: agoda}
+  - {name: Airbnb, ats: greenhouse, token: airbnb}
+  - {name: Coinbase, ats: greenhouse, token: coinbase}
+  - {name: Anthropic, ats: greenhouse, token: anthropic}
+  - {name: Samsara, ats: greenhouse, token: samsara}
+  - {name: New Relic, ats: greenhouse, token: newrelic}
+  - {name: Cloudflare, ats: greenhouse, token: cloudflare}
+
+  # --- Lever (auto-fill supported) ---
+  - {name: Paytm, ats: lever, token: paytm}
+  - {name: Meesho, ats: lever, token: meesho}
+  - {name: Hevo Data, ats: lever, token: hevodata}
+  - {name: Zeta, ats: lever, token: zeta}
+  - {name: Mindtickle, ats: lever, token: mindtickle}
+  - {name: FamPay, ats: lever, token: fampay}
+  - {name: CRED, ats: lever, token: cred}
+  - {name: Pocket FM, ats: lever, token: pocketfm}
+  - {name: Fi, ats: lever, token: epifi}
+
+  # --- Ashby (auto-fill supported) ---
+  - {name: Sarvam AI, ats: ashby, token: sarvam}
+  - {name: Atlys, ats: ashby, token: atlys}
+  - {name: Plane, ats: ashby, token: plane}
+  - {name: ElevenLabs, ats: ashby, token: elevenlabs}
+  - {name: Snowflake, ats: ashby, token: snowflake}
+  - {name: OpenAI, ats: ashby, token: openai}
+  - {name: SpotDraft, ats: ashby, token: spotdraft}
+  - {name: Composio, ats: ashby, token: composio}
+  - {name: Atlan, ats: ashby, token: atlan}
+  - {name: Notion, ats: ashby, token: notion}
+
+  # --- SmartRecruiters (auto-fill attempted) ---
+  - {name: Swiggy, ats: smartrecruiters, token: Swiggy}
+  - {name: ServiceNow, ats: smartrecruiters, token: ServiceNow}
+  - {name: Freshworks, ats: smartrecruiters, token: Freshworks}
+  - {name: Bosch, ats: smartrecruiters, token: BoschGroup}
+
+  # --- Workable (auto-fill attempted) ---
+  - {name: Apna, ats: workable, token: apna}
+
+  # --- Workday (discovery only: Workday needs an account per company, so these go to your apply-yourself list) ---
+  - {name: Sprinklr, ats: workday, token: sprinklr.wd1/careers}
+  - {name: Uniphore, ats: workday, token: uniphore.wd503/uniphore}
+
+  # --- Bengaluru startups added 26 Nov 2026 (feeds verified live, with Bengaluru/India roles) ---
+  - {name: Tekion, ats: ashby, token: tekion}
+  - {name: Bureau, ats: ashby, token: bureau}
+  - {name: Bolna, ats: ashby, token: bolna}
+  - {name: Giga (GigaML), ats: ashby, token: gigaml}
+  - {name: Smallest.ai, ats: ashby, token: smallest}
+  - {name: Leap, ats: ashby, token: leap}
+  - {name: Glance, ats: greenhouse, token: glance}
+  - {name: TrueFoundry, ats: greenhouse, token: truefoundry}
+  - {name: slice, ats: greenhouse, token: slice}
+
+  # --- India employers added 26 Nov 2026 (any size; feeds verified live with India roles) ---
+  - {name: Sigmoid, ats: greenhouse, token: sigmoid}
+  - {name: Celonis, ats: greenhouse, token: celonis}
+  - {name: Smartsheet, ats: greenhouse, token: smartsheet}
+  - {name: HackerRank, ats: greenhouse, token: hackerrank}
+  - {name: Netskope, ats: greenhouse, token: netskope}
+  - {name: Toast, ats: greenhouse, token: toast}
+  - {name: Datadog, ats: greenhouse, token: datadog}
+  - {name: Dremio, ats: greenhouse, token: dremio}
+  - {name: UiPath, ats: ashby, token: uipath}
+  - {name: Thoughtworks, ats: ashby, token: thoughtworks}
+  - {name: Nium, ats: lever, token: nium}

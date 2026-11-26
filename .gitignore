@@ -1,0 +1,16 @@
+# Secrets and personal data - never commit
+.env
+config.yaml
+data/
+*.pdf
+*.docx
+resume*
+Resume*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/

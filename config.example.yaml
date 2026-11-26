@@ -1,0 +1,95 @@
+# LevelUpCorp settings. Copy this file to config.yaml and edit it.
+# config.yaml is git-ignored, so your personal answers never go to GitHub.
+
+llm:
+  model: claude-opus-5-5          # used for every step unless overridden below
+  # Optional cheaper models per step (scoring is the high-volume step), e.g.:
+  # per_task_model: {score: claude-haiku-5-5, inbox: claude-haiku-5-5}
+  per_task_model: {}
+  effort: {score: low, answer: medium}
+
+search:
+  min_salary_lpa: 8               # jobs whose top of range is below this are dropped
+  usd_inr: 84                     # for converting foreign salaries
+  max_age_days: 14                # ignore postings older than this
+  remote_ok: true                 # accept remote roles open to India / worldwide
+  accept_any_remote: false        # true = also accept remote roles with unclear location limits
+  cities: []                      # e.g. [bengaluru, bangalore, hyderabad, pune]; empty = anywhere in India
+  # Search keywords. Empty = use the job titles Claude inferred from your resume (data/profile.json).
+  keywords: []
+  extra_titles: []                # added to the inferred titles, e.g. ["GenAI Engineer", "Python Developer"]
+  # Rule filter on job titles (cheap, runs before Claude scoring). Lowercase substrings.
+  # Whole-word matching: "ml" matches "ML Engineer" but not "HTML".
+  title_must_include: [engineer, developer, sde, software, ml, ai, machine learning, data scientist,
+                       backend, frontend, full stack, fullstack, python, llm, genai, programmer, applied scientist]
+  title_exclude: [director, vp, vice president, head of, manager, principal, recruiter, sales, marketing,
+                  account executive, support engineer, manual testing, mechanical, civil, electrical]
+  senior_titles_from_years: 4     # with less experience than this, skip Senior/Lead/Staff titles
+  include_internships: false
+  company_blocklist: []           # e.g. your current employer
+
+match:
+  min_score: 70                   # Claude fit score (0-100) needed to apply
+  allow_unknown_salary: true      # apply when salary is unknown and Claude can't estimate it
+  max_llm_scores_per_run: 150     # cost control: jobs scored by Claude per cycle
+
+apply:
+  dry_run: true                   # SAFETY: fills forms but does NOT submit. Set to false when you're happy.
+  max_applications_per_day: 20
+  max_per_company_per_30_days: 2
+  pause_between_seconds: [40, 120]
+  headless: false                 # keep false: you can watch, and solve a CAPTCHA if one appears
+  wait_for_captcha_seconds: 180   # how long to wait for you to solve a CAPTCHA before moving on
+  browser_channel: ""             # "chrome" to use your installed Google Chrome instead of bundled Chromium
+  keep_review_tabs_open: false
+
+# Answers to the standard questions every application form asks.
+# These are authoritative: Claude copies them, never guesses them.
+applicant:
+  resume_path: ""                 # leave empty to use the file you gave to `setup`
+  current_ctc_lpa: ""             # e.g. "6.5"
+  expected_ctc_lpa: ""            # e.g. "10"
+  notice_period: ""               # e.g. "30 days" / "Immediate"
+  willing_to_relocate: "Yes"
+  preferred_locations: "Bengaluru, Hyderabad, Pune, Remote"
+  work_authorization: "Indian citizen, authorised to work in India; no sponsorship needed for India"
+  needs_visa_sponsorship_abroad: "Yes"
+  date_available: ""              # e.g. "Within 30 days"
+  how_did_you_hear: "Company careers page"
+  gender: "Prefer not to say"
+  pronouns: ""
+  disability: "Prefer not to say"
+  veteran_status: "Not applicable"
+  ethnicity: "Prefer not to say"
+  # Add any other answer you want reused, e.g.:
+  # years_python: "3"
+
+sources:
+  company_career_pages: true      # companies listed in companies.yaml (Greenhouse, Lever, Ashby, ...)
+  boards:                         # free public job APIs; set false to disable one
+    remotive: true
+    remoteok: true
+    himalayas: true
+    jobicy: true
+    arbeitnow: false              # mostly European on-site roles
+    hn_hiring: true
+    adzuna: true                  # needs ADZUNA_APP_ID / ADZUNA_APP_KEY in .env (free)
+    jooble: true                  # needs JOOBLE_API_KEY in .env (free)
+  jobspy:                         # LinkedIn / Indeed / Naukri / Glassdoor discovery (no login, no auto-apply)
+    enabled: false                # needs: pip install python-jobspy
+    sites: [indeed, linkedin, naukri, glassdoor]
+    location: India
+    results_per_term: 40
+
+inbox:
+  imap_host: imap.gmail.com
+  first_scan_days: 14
+
+notify:
+  send_to: ""                     # where alerts go; empty = your EMAIL_ADDRESS
+  daily_digest: true
+  smtp_host: smtp.gmail.com
+  smtp_port: 587
+
+schedule:
+  every_hours: 4                  # used by `python -m levelup run`
