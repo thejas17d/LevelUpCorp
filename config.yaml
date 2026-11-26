@@ -1,0 +1,107 @@
+# LevelUpCorp settings for Thejas (set up 26 Nov 2026). git-ignored - never committed.
+
+llm:
+  provider: groq                  # free tier; "anthropic" if you ever add ANTHROPIC_API_KEY
+  chain: [openai/gpt-oss-120b, qwen/qwen3.8-27b, openai/gpt-oss-20b]   # tried in order; next one takes over on rate limit
+  per_task_model: {}
+  effort: {score: low, answer: medium}
+  # Groq free tier = 8,000 tokens per minute per model, so keep each call small.
+  max_output_tokens: 3000
+  score_batch_size: 2
+  score_description_chars: 1200
+  score_max_tokens: 1500
+  answer_description_chars: 1500
+  answer_max_tokens: 3000
+
+search:
+  min_salary_lpa: 8               # target 8-12 LPA
+  usd_inr: 84
+  max_age_days: 14
+  remote_ok: true
+  accept_any_remote: false
+  cities: []                      # anywhere in India + remote-from-India (Bengaluru preferred)
+  keywords: []
+  extra_titles: ["AI Engineer", "AI Automation Engineer", "Forward Deployed Engineer", "Solutions Engineer",
+                 "Growth Engineer", "Data Analyst", "Product Analyst", "Analytics Engineer", "LLM Engineer",
+                 "Applied AI Engineer", "GenAI Engineer", "Marketing Analyst", "Business Analyst"]
+  # Target roles only (not backend/web dev). Lowercase, whole-word matched.
+  title_must_include: [ai, genai, llm, ml, machine learning, applied ai, automation, forward deployed, deployment strategist,
+                       solutions engineer, solution engineer, solutions consultant, growth, analyst, analytics,
+                       data engineer, data scientist, implementation engineer, integration engineer,
+                       customer engineer, technical success, prompt engineer, agent]
+  title_exclude: [director, vp, vice president, head of, manager, principal, recruiter, sales, account executive,
+                  backend, back-end, frontend, front-end, full stack, fullstack, web developer, ios, android developer,
+                  mechanical, civil, electrical, hardware, firmware, embedded, verification, security analyst,
+                  financial analyst, credit analyst, risk analyst, legal, hr, intern, internship, support, customer support,
+                  accounting, accountant, accounts payable, accounts receivable, ar analyst, billing, collections,
+                  deal desk, real estate, trading, tax, payroll, procurement, treasury, audit, fraud]
+  senior_titles_from_years: 4
+  max_required_years: 3          # skip postings that ask for 3+ years (fresher profile)
+  include_internships: false
+  company_blocklist: [HiveMinds, Hiveminds Innovative Market Solutions]
+
+match:
+  min_score: 60                   # fresher-friendly bar; <60 = not worth an application
+  allow_unknown_salary: true
+  max_llm_scores_per_run: 320
+
+apply:
+  dry_run: false                  # LIVE since 26 Nov 2026 (answers checked in dry runs)
+  max_applications_per_day: 60
+  max_per_company_per_30_days: 2
+  pause_between_seconds: [30, 75]
+  headless: false
+  wait_for_captcha_seconds: 600   # 10 min to reach the laptop (Telegram pings you)
+  browser_channel: ""
+  keep_review_tabs_open: false
+
+applicant:
+  resume_path: ""
+  current_ctc_lpa: "3-4 LPA"
+  expected_ctc_lpa: "8-12 LPA (for numeric-only fields: 10)"
+  notice_period: "Up to 60 days"
+  willing_to_relocate: "Yes"
+  preferred_locations: "Bengaluru (preferred); open to any Indian city or remote"
+  work_authorization: "Indian citizen, legally authorised to work in India (answer Yes); needs NO visa sponsorship for jobs in India (answer No)"
+  date_available: "Within 60 days of offer"
+  how_did_you_hear: "Company careers page"
+  gender: "Male"
+  pronouns: ""
+  disability: "Prefer not to say"
+  veteran_status: "Not applicable"
+  ethnicity: "Prefer not to say"
+  current_location: "Bengaluru, Karnataka, India"
+  total_experience: "About 6 months full-time (HiveMinds, since Jun 2026) plus two internships"
+  years_of_experience: "Less than 1 year full-time (about 6 months); for numeric-only fields: 0.5"
+  non_compete_or_post_employment_restrictions: "No"
+  graduation_year: "2026"
+
+sources:
+  company_career_pages: true
+  boards:
+    remotive: true
+    remoteok: true
+    himalayas: true
+    jobicy: true
+    arbeitnow: false
+    hn_hiring: true
+    adzuna: true
+    jooble: true
+  jobspy:
+    enabled: true
+    sites: [linkedin, indeed, naukri]
+    location: India
+    results_per_term: 25
+
+inbox:
+  imap_host: imap.gmail.com
+  first_scan_days: 14
+
+notify:
+  send_to: ""
+  daily_digest: true
+  smtp_host: smtp.gmail.com
+  smtp_port: 587
+
+schedule:
+  every_hours: 4

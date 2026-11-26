@@ -1,0 +1,10 @@
+Dear Fam hiring team,
+
+I am thrilled to apply for the Data Analyst position at Fam. With a Computer Science degree and 0.8 years of hands‑on experience building AI‑powered data pipelines, I have a proven track record of turning raw data into actionable insights. At HiveMinds I replaced a 20‑day manual scraping workflow with a Python API pipeline, automated audits for over 2,200 business listings, and created a rank‑tracking system that delivered real‑time analytics for a major QSR brand. My expertise in Python, SQL, and modern AI tools, combined with a strong foundation in Google Analytics, SEO, and data visualisation, equips me to support Fam’s product, engineering, and finance teams.
+
+I am particularly drawn to Fam’s mission of empowering the next generation financially and its commitment to leveraging AI for product innovation. I am eager to bring my analytical mindset, automation skills, and passion for data‑driven decision making to help Fam scale its impact.
+
+Thank you for considering my application. I look forward to the possibility of contributing to Fam’s exciting journey.
+
+Sincerely,
+Thejas M

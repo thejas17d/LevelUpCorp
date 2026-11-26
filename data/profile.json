@@ -1,0 +1,179 @@
+{
+  "full_name": "Thejas M",
+  "first_name": "Thejas",
+  "last_name": "M",
+  "email": "thejasg10@gmail.com",
+  "phone": "+91 96633 35007",
+  "city": "Bengaluru",
+  "country": "India",
+  "linkedin_url": "https://www.linkedin.com/in/thejas-m-57b72129a/",
+  "github_url": "https://github.com/thejas17d",
+  "portfolio_url": "",
+  "total_experience_years": 0.8,
+  "current_title": "Business / Marketing Analyst",
+  "current_company": "HiveMinds",
+  "summary": "Computer Science graduate (2026) with hands-on experience building AI-powered automation, data pipelines and analytics tools. At HiveMinds, replaced a 20-day scraping workflow with a Python API pipeline, created a free in-house analytics add-on, and automated audits for over 2,200 business listings. Skilled in Python, SQL, LLM APIs, Docker and CI/CD, and experienced with Google APIs and data analysis. Seeking roles in AI Engineering, Forward Deployed, Growth Engineering and Data domains.",
+  "skills": [
+    "AI & LLMs: LLM APIs (OpenAI, OpenRouter, Groq, NVIDIA Nemotron, Claude), AI agents, RAG, LangChain, MCP, function / tool calling, structured outputs, prompt engineering, vector databases, semantic search, model routing and fallback, MoE, Claude Code, OpenClaw",
+    "Languages & Data: Python, SQL, Kotlin, HTML, CSS, data analysis, data structures and algorithms",
+    "Automation & APIs: REST APIs, Google APIs (Places, Business Profile, Search Console, GA4, Sheets), OAuth 2.0, web scraping, browser automation (Selenium, Playwright), Telegram Bot API",
+    "DevOps & Cloud: Docker, Kubernetes, Git, GitHub, GitHub Actions (CI/CD), Azure Virtual Machines, Linux",
+    "Analytics & SEO: Google Search Console, Google Analytics 4, Semrush, Ahrefs, SE Ranking, SEO, process optimisation"
+  ],
+  "primary_stack": [
+    "Python",
+    "SQL",
+    "LLM APIs (OpenAI, OpenRouter, Groq, NVIDIA Nemotron)",
+    "Docker",
+    "Google APIs"
+  ],
+  "target_titles": [
+    "AI Engineer",
+    "LLM Engineer",
+    "Applied AI Engineer",
+    "GenAI Engineer",
+    "AI Automation Engineer",
+    "Forward Deployed Engineer",
+    "AI Solutions Engineer",
+    "Solutions Engineer",
+    "Growth Engineer",
+    "Data Analyst",
+    "Product Analyst",
+    "Analytics Engineer",
+    "Business Intelligence Analyst",
+    "Marketing Analyst",
+    "Data Engineer",
+    "Prompt Engineer"
+  ],
+  "seniority": "junior",
+  "education": [
+    {
+      "degree": "Bachelor of Engineering, Computer Science",
+      "institution": "Global Academy of Technology, Bengaluru",
+      "year": "2022 – 2026"
+    },
+    {
+      "degree": "Pre-University (Class 12)",
+      "institution": "St Joseph’s Pre University College",
+      "year": "2020 – 2022"
+    },
+    {
+      "degree": "Class 10",
+      "institution": "The Indiranagar Cambridge School",
+      "year": "2010 – 2020"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Business / Marketing Analyst",
+      "company": "HiveMinds",
+      "start": "Jun 2026",
+      "end": "Present",
+      "highlights": [
+        "Built a Python rank-tracking pipeline on the Google Places API for a leading QSR brand, collecting ranks for 5,000+ stores in under 2 hours",
+        "Created HiveEasy, an in-house Search Console + GA4 to Google Sheets tool that replaced a paid add-on at zero cost",
+        "Developed a Google Business Profile audit tool covering 2,200+ listings, automatically flagging NAP inconsistencies and missing attributes",
+        "Automated GBP store creation and bulk updates via API, reducing manual setup time from ~10 minutes per store",
+        "Built Semantics, a keyword-filtering tool using TF-IDF n-gram vectors and a self-trained classifier, achieving 92% automatic decisions on a benchmark",
+        "Automated weekly rank tracking for 300+ keywords across 3 cities via the SE Ranking API",
+        "Diagnosed traffic drops by correlating GSC, GA4, Semrush and Ahrefs data",
+        "Awarded Star of the Month in June 2026"
+      ]
+    },
+    {
+      "title": "DevOps Intern",
+      "company": "Conzura Soft Solutions",
+      "start": "Jan 2026",
+      "end": "May 2026",
+      "highlights": [
+        "Built CI/CD pipelines with GitHub Actions to automate Docker-based build and deployment workflows",
+        "Containerized applications with Docker and deployed them to Azure Virtual Machines via SSH on Linux",
+        "Used Git and GitHub branching and pull-request workflows for collaborative development"
+      ]
+    },
+    {
+      "title": "Data Analyst Intern",
+      "company": "Hindustan Aeronautics Limited (HAL)",
+      "start": "Sep 2025",
+      "end": "Oct 2025",
+      "highlights": [
+        "Cleaned, preprocessed and analyzed helicopter sensor datasets following the Data Analysis Lifecycle",
+        "Built a Python automation tool that detects abnormal or faulty sensors and generates failure reports, replacing manual inspection while keeping data secure"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Multi-LLM AI Agent with Model Routing",
+      "summary": "Built a personal AI agent on OpenClaw that connects OpenAI, OpenRouter, Groq and NVIDIA Nemotron APIs and routes each task to the best-suited model, with a fallback layer for provider failures",
+      "tech": [
+        "Python",
+        "OpenAI",
+        "OpenRouter",
+        "Groq",
+        "NVIDIA Nemotron"
+      ]
+    },
+    {
+      "name": "LevelUpCorp: AI Job-Application Agent",
+      "summary": "Created an agent that discovers roles from company ATS feeds and job-board APIs, scores fit with LLM-structured outputs, and fills application forms via Playwright, incorporating safety rails and human-in-the-loop CAPTCHA handling",
+      "tech": [
+        "Python",
+        "LLM APIs",
+        "Playwright",
+        "SQLite"
+      ]
+    },
+    {
+      "name": "SpaceView: AR Measurement App",
+      "summary": "Developed an Android AR app that measures real-world objects with accuracy indicators, saves scans to a gallery, and places them in-room at true size, optimized for Google Play with CI builds",
+      "tech": [
+        "Android",
+        "Kotlin",
+        "ARCore",
+        "Jetpack Compose"
+      ]
+    },
+    {
+      "name": "AI Office Assistant",
+      "summary": "Built a multilingual AI assistant for college administration using retrieval-augmented generation (RAG) to answer queries and adapt responses to user sentiment",
+      "tech": [
+        "RAG",
+        "Multilingual",
+        "Sentiment-aware"
+      ]
+    },
+    {
+      "name": "DecenRep",
+      "summary": "Implemented a system that stores and verifies medical reports on the Ethereum Sepolia testnet with smart contracts, and uses NLP models to explain diagnoses in simple terms",
+      "tech": [
+        "Blockchain",
+        "Ethereum",
+        "NLP"
+      ]
+    },
+    {
+      "name": "Stock Alert Bot",
+      "summary": "Automated product-availability checks on Blinkit with Selenium and sent Telegram alerts when tracked items came back in stock",
+      "tech": [
+        "Selenium",
+        "Telegram API"
+      ]
+    },
+    {
+      "name": "Thriller Game",
+      "summary": "Built and completed a thriller game for Android; Google Play release pending",
+      "tech": [
+        "Android",
+        "Kotlin"
+      ]
+    }
+  ],
+  "certifications": [
+    "Star of the Month, HiveMinds (first month, June 2026)",
+    "Hack-a-league 3.0, national-level hackathon",
+    "Google Cloud GenAI Certified Professional (H2S Exchange Program)",
+    "Oracle AI Vector Search Certified Professional"
+  ],
+  "resume_path": "C:\\Users\\Thejas\\Desktop\\Thejas\\Personal\\Resume\\Thejas M - Resume (2026-11-26).pdf"
+}
