@@ -130,6 +130,48 @@ def apply_queue(cfg: Config, profile: dict, llm: LLM, db: DB) -> dict:
     return stats
 
 
+def review_tabs(cfg: Config, profile: dict, llm: LLM, db: DB, limit: int = 20, wait_minutes: int = 60) -> dict:
+    """Open every needs_review job in its own tab of one window, pre-filled, and let the user finish them
+    in any order. Each confirmation page is recorded as submitted."""
+    from levelup.apply.browser import BrowserApplier
+    from levelup.notify import telegram
+
+    rows = [_row(j) for j in db.jobs_with_status("needs_review", limit=limit)]
+    if not rows:
+        return {"opened": 0}
+    browser = BrowserApplier(cfg, profile, llm)
+    tabs = []
+    try:
+        for job in rows:
+            method, url = plan(job)
+            url = url or job.get("apply_url") or job.get("url")
+            log.info("  opening tab: %s - %s", job["company"], job["title"])
+            page = browser.prefill(job, url)
+            if page is not None:
+                tabs.append((job, page))
+        names = "\n".join(f"- {j['company']}: {j['title']}" for j, _ in tabs)
+        msg = (f"{len(tabs)} tabs are open on your laptop, pre-filled. Finish any you want and submit; "
+               f"close a tab to skip it. I'll watch them for {wait_minutes} min.\n{names}")
+        print("\n  " + msg.replace("\n", "\n  "))
+        telegram(msg)
+        outcome = browser.watch_tabs(tabs, wait_seconds=wait_minutes * 60)
+    finally:
+        try:
+            browser.close()
+        except Exception:
+            pass
+    stats = {"opened": len(tabs), "submitted": 0, "skipped": 0, "needs_review": 0}
+    for job, _ in tabs:
+        o = outcome.get(job["key"], "needs_review")
+        stats[o] = stats.get(o, 0) + 1
+        if o == "submitted":
+            db.log_application(job["key"], "submitted", "manual_review")
+            db.set_status(job["key"], "applied")
+    done = [j["company"] for j, _ in tabs if outcome.get(j["key"]) == "submitted"]
+    telegram(f"Review tabs done - submitted {stats['submitted']}: {', '.join(done) or 'none'}")
+    return stats
+
+
 def review_queue(cfg: Config, profile: dict, llm: LLM, db: DB, limit: int = 10) -> dict:
     """Open needs_review jobs one by one so the user can finish them in the browser."""
     from levelup.apply.browser import BrowserApplier

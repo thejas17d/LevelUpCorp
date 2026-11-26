@@ -645,6 +645,66 @@ class BrowserApplier:
             if not keep_open:
                 page.close()
 
+    def prefill(self, job, form_url: str):
+        """Open the job in a new tab and fill what can be filled truthfully; leave it open for the user.
+        Returns the page (or None if it could not even be opened)."""
+        page = self.ctx.new_page()
+        try:
+            frame = self._open_form(page, form_url)
+        except Exception as e:  # noqa: BLE001
+            log.warning("  could not open %s: %s", form_url, e)
+            return page
+        try:
+            fields = frame.evaluate(EXTRACT_JS)
+            if fields:
+                answers, letter = answer_fields(fields, job, self.profile, self.llm, self.cfg)
+                _fix_file_fields(fields, answers)
+                letter_path = ""
+                if letter:
+                    letter_path = str(_letter_file(job, self.profile.get('full_name', '')))
+                    Path(letter_path).write_text(letter, encoding="utf-8")
+                for f in fields:
+                    self._fill(frame, f, answers.get(f["fid"], {"value": ""}), self.profile.get("resume_path", ""), letter_path)
+                    page.wait_for_timeout(100)
+        except Exception as e:  # noqa: BLE001
+            log.warning("  prefill partly failed for %s: %s", job["company"], e)
+        return page
+
+    def watch_tabs(self, tabs: list, wait_seconds: int = 3600) -> dict:
+        """tabs = [(job, page)]. Poll every tab for a confirmation page until all are submitted or closed,
+        or the browser window is closed, or time runs out. Returns {job_key: 'submitted'|'skipped'|'needs_review'}."""
+        result = {job["key"]: "needs_review" for job, _ in tabs}
+        deadline = time.time() + wait_seconds
+        while time.time() < deadline:
+            open_left = 0
+            for job, page in tabs:
+                if result[job["key"]] != "needs_review":
+                    continue
+                try:
+                    if page.is_closed():
+                        result[job["key"]] = "skipped"
+                        continue
+                    body = self._form_frame(page).locator("body").inner_text(timeout=2000)[:5000]
+                    if SUCCESS_RE.search(body) or re.search(r"thank|confirmation|submitted|success", page.url, re.I):
+                        result[job["key"]] = "submitted"
+                        log.info("  submitted: %s - %s", job["company"], job["title"])
+                        continue
+                    open_left += 1
+                except Exception:
+                    # One tab erroring (e.g. reloading after Submit) must not end the session.
+                    # Only stop when the whole browser window is gone.
+                    try:
+                        _ = self.ctx.pages
+                        if not any(not p.is_closed() for _, p in tabs):
+                            return result
+                        open_left += 1
+                    except Exception:
+                        return result
+            if open_left == 0:
+                break
+            time.sleep(3)
+        return result
+
     def review(self, job, form_url: str, wait_seconds: int = 900) -> str:
         """Open a job for the user to finish by hand; pre-fills what it can, then waits for confirmation."""
         page = self.ctx.new_page()

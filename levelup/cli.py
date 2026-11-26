@@ -73,6 +73,10 @@ def cmd_review(args, cfg) -> None:
     from levelup.pipeline import make_llm
     from levelup.resume import load_profile
 
+    if getattr(args, "tabs", False):
+        from levelup.apply import review_tabs
+        print(review_tabs(cfg, load_profile(cfg), make_llm(cfg), DB(), limit=args.limit, wait_minutes=args.minutes))
+        return
     print(review_queue(cfg, load_profile(cfg), make_llm(cfg), DB(), limit=args.limit))
 
 
@@ -152,6 +156,8 @@ def main() -> None:
     sub.add_parser("discover", help="find and score jobs only")
     rv = sub.add_parser("review", help="finish applications that need you")
     rv.add_argument("--limit", type=int, default=10)
+    rv.add_argument("--tabs", action="store_true", help="open all of them at once, one tab each, pre-filled")
+    rv.add_argument("--minutes", type=int, default=60, help="with --tabs: how long to watch the tabs")
     sub.add_parser("inbox", help="check email for callbacks now")
     st = sub.add_parser("status", help="show counts and open the report")
     st.add_argument("--no-open", action="store_true")
