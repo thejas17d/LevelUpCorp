@@ -215,6 +215,11 @@ def _best_option(v: str, labels: list[str], field_label: str = "") -> Optional[i
                     best, score = i, s
         if score >= 0.5:
             return best
+    if re.search(r"how did you (hear|find|learn)|source|where did you (hear|find|see)", field_label, re.I):
+        for pat in (r"career|company (web)?site|website|company page", r"job board|online", r"^other"):
+            for i, x in enumerate(labels):
+                if re.search(pat, x, re.I):
+                    return i
     if _EDU_FIELD.search(field_label):
         for i, x in enumerate(norms):
             if x == "other" or x.startswith("other"):
@@ -281,7 +286,9 @@ def _clean_text(s: str) -> str:
 _FIXED = [
     (r"legally (authori[sz]ed|eligible|entitled)|authori[sz]ed to work|eligible to work|right to work in", "yes"),
     (r"(require|need)s?\b.{0,40}sponsor|sponsorship", "no"),
-    (r"previously (worked|been employed|employed|consulted)|former employee|ever worked (at|for)|worked (at|for) .{0,40} before", "no"),
+    (r"previously (worked|been employed|employed|consulted)|former employee|ever worked (at|for)|worked (at|for) .{0,40} before|ever been employed|been employed by", "no"),
+    (r"located (in|on) (the )?(east|west) coast|located in the (united states|us|usa|uk|united kingdom|eu|europe|canada)|are you a u\.?s\.? (citizen|resident)", "no"),
+    (r"opt[- ]?in|receive (marketing|news|updates|communications)|subscribe", "no"),
     (r"currently (based|located|living|reside) in (bangalore|bengaluru)", "yes"),
     (r"non-?compete|non-?solicit|post-employment restriction|employment agreements?", "no"),   # confirmed by candidate 26 Nov 2026
     (r"(open|willing) to (relocat|work from office|work in office|hybrid)", "yes"),
@@ -334,8 +341,16 @@ def _apply_fixed_rules(fields: list[dict], answers: dict, job, cfg: Config, prof
                 else:
                     val_f = val
                 a.update(value=val_f, source="profile")
+    # Location questions always get the real current city, never the "preferred locations" sentence.
+    here = ((profile or {}).get("applicant_answers") or {}).get("current_location") or "Bengaluru, Karnataka, India"
+    for f in fields:
+        lab = (f.get("label") or "").strip()
+        if f["kind"] in ("text", "combobox") and re.search(
+                r"^(current )?location( \(city\))?\*?$|^city\*?$|^current city\*?$|where are you (currently )?(based|located)", lab, re.I):
+            answers.setdefault(f["fid"], {"fid": f["fid"]}).update(
+                value=here.split(",")[0] if f["kind"] == "combobox" else here, source="applicant_answers")
     loc = f"{job['location'] or ''}".lower()
-    india_job = bool(re.search(r"india|bengaluru|bangalore|hyderabad|pune|chennai|mumbai|delhi|gurgaon|gurugram|noida|remote", loc))
+    india_job =bool(re.search(r"india|bengaluru|bangalore|hyderabad|pune|chennai|mumbai|delhi|gurgaon|gurugram|noida|remote", loc))
     for f in fields:
         label = f.get("label") or ""
         a = answers.setdefault(f["fid"], {"fid": f["fid"], "value": "", "source": "unknown"})

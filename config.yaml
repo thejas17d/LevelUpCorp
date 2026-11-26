@@ -34,14 +34,15 @@ search:
                   mechanical, civil, electrical, hardware, firmware, embedded, verification, security analyst,
                   financial analyst, credit analyst, risk analyst, legal, hr, intern, internship, support, customer support,
                   accounting, accountant, accounts payable, accounts receivable, ar analyst, billing, collections,
-                  deal desk, real estate, trading, tax, payroll, procurement, treasury, audit, fraud]
+                  deal desk, real estate, trading, tax, payroll, procurement, treasury, audit, fraud,
+                  quality analyst, quality assurance, qa, compliance, workforce]
   senior_titles_from_years: 4
-  max_required_years: 3          # skip postings that ask for 3+ years (fresher profile)
+  max_required_years: 4          # skip postings asking 4+ years (3-year postings allowed as stretch, 26 Nov)
   include_internships: false
   company_blocklist: [HiveMinds, Hiveminds Innovative Market Solutions]
 
 match:
-  min_score: 60                   # fresher-friendly bar; <60 = not worth an application
+  min_score: 50                   # stretch bar (user chose 26 Nov); was 60
   allow_unknown_salary: true
   max_llm_scores_per_run: 320
 
